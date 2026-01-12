@@ -1,6 +1,6 @@
 package com.example.gateway;
 
-import com.example.common.web.CorrelationIdFilter;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -12,11 +12,5 @@ public class ApiGatewayApplication {
         SpringApplication.run(ApiGatewayApplication.class, args);
     }
 
-    @Bean
-    public FilterRegistrationBean<CorrelationIdFilter> correlationIdFilter() {
-        FilterRegistrationBean<CorrelationIdFilter> bean = new FilterRegistrationBean<>();
-        bean.setFilter(new CorrelationIdFilter());
-        bean.setOrder(1);
-        return bean;
-    }
+
 }

@@ -1,6 +1,6 @@
 package com.example.order;
 
-import com.example.common.web.CorrelationIdFilter;
+import com.example.order.web.CorrelationIdFilter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
