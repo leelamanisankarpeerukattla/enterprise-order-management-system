@@ -1,0 +1,35 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: auth
+          uri: http://auth-service:8081
+          predicates: [ Path=/auth/** ]
+        - id: orders
+          uri: http://order-service:8082
+          predicates: [ Path=/orders/**,/admin/orders/** ]
+        - id: inventory
+          uri: http://inventory-service:8083
+          predicates: [ Path=/admin/products/**,/products/** ]
+        - id: payment
+          uri: http://payment-service:8084
+          predicates: [ Path=/admin/payments/** ]
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:change-me-super-secret-key-change-me}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+logging:
+  pattern:
+    level: "%5p [corr=%X{correlationId}]"

@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      # Build everything in reactor (common + all services)
+      - name: Build backend (multi-module)
+        run: mvn -q test
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Use npm install (more robust than npm ci for a new repo)
+      - name: Build web
+        working-directory: web
+        run: |
+          npm install
+          npm run build

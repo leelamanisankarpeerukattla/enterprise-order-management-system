@@ -1,0 +1,4 @@
+package com.example.order.domain;
+public enum OrderStatus {
+    CREATED, INVENTORY_RESERVED, INVENTORY_FAILED, PAYMENT_REQUESTED, PAYMENT_COMPLETED, PAYMENT_FAILED
+}

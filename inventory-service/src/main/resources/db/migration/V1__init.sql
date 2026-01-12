@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS products (
+  id UUID PRIMARY KEY,
+  name VARCHAR(200) NOT NULL,
+  price_cents BIGINT NOT NULL,
+  stock INT NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
