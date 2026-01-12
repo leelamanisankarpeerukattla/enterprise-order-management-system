@@ -91,26 +91,3 @@ Seeded on startup:
 
 ---
 
-## Upload to GitHub
-```bash
-git init
-git add .
-git commit -m "Initial commit: enterprise order management system"
-git branch -M main
-git remote add origin <YOUR_REPO_URL>
-git push -u origin main
-```
-
----
-
-## Recruiter talking points
-- Designed event-driven microservices using Kafka to decouple domains and scale independently
-- Implemented JWT + RBAC with Spring Security + gateway enforcement
-- Built reliable async workflows via state transitions and idempotent-ish consumers
-- Improved performance via Redis caching + efficient DB access
-- Added production practices: Flyway migrations, Actuator health/metrics, CI, Docker, and K8s manifests
-
----
-
-## License
-MIT
