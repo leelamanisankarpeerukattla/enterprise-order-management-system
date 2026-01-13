@@ -1,20 +1,22 @@
 # Enterprise Full-Stack Order Management System (Microservices)
-**Java • Spring Boot • Kafka • React (TypeScript) • PostgreSQL • Redis • Docker • GitHub Actions • Kubernetes (EKS-ready manifests)**
+![CI](https://github.com/leelamanisankarpeerukattla/enterprise-order-management-system/actions/workflows/ci.yml/badge.svg)
+**Java • Spring Boot • Kafka • React (TypeScript) • PostgreSQL • Redis • Docker • GitHub Actions • Kubernetes (EKS-ready)**
 
-A recruiter-friendly, end-to-end **event-driven** order management platform demonstrating:
-- Microservices architecture with clear domain boundaries
-- **Kafka-driven workflows** (Order → Inventory → Payment → status updates)
-- **JWT authentication + role-based access control (RBAC)**
-- **PostgreSQL + JPA** with **Flyway** migrations
-- **Redis caching** for hot order reads
-- Observability: **Actuator**, structured logs, correlation IDs
-- Dockerfiles per service + **Docker Compose** one-command local run
-- **GitHub Actions CI**
-- **Kubernetes manifests** compatible with AWS EKS
+This project is an end-to-end Order Management System built to demonstrate how real-world backend and full-stack systems are designed, secured, and deployed.
+It focuses on system design, event-driven workflows, security, and reliability, not just CRUD APIs.
+The application is fully runnable locally using Docker and continuously validated using GitHub Actions.
 
----
+### This project was built to reflect how production systems are typically structured:
+- Microservices with clear responsibilities
+- Asynchronous communication using Kafka
+- Centralized authentication and authorization
+- Database-per-service design
+- Caching for performance
+- CI/CD and containerized deployment
 
-## Architecture (high level)
+It intentionally avoids monolithic shortcuts and instead prioritizes scalability, decoupling, and maintainability.
+
+## Architecture 
 
 ### Services
 | Service | Port | Purpose |
@@ -24,6 +26,7 @@ A recruiter-friendly, end-to-end **event-driven** order management platform demo
 | `order-service` | 8082 | Creates orders, publishes events, tracks status, caches reads |
 | `inventory-service` | 8083 | Product catalog + stock reservation via Kafka |
 | `payment-service` | 8084 | Mock payment processing via Kafka |
+| `web (React)` | 5173 | Frontend UI |
 
 ### Kafka Topics
 - `orders.events`
@@ -42,22 +45,47 @@ sequenceDiagram
   participant K as Kafka
 
   UI->>GW: Login
-  GW->>AUTH: /auth/login
-  AUTH-->>UI: JWT
+  GW->>AUTH: POST /auth/login
+  AUTH-->>GW: JWT
+  GW-->>UI: JWT
 
   UI->>GW: Create order (JWT)
   GW->>ORD: POST /orders
-  ORD->>K: OrderCreated
-  K-->>INV: OrderCreated
-  INV->>K: InventoryReserved/Failed
-  K-->>ORD: InventoryReserved/Failed
-  ORD->>K: PaymentRequested (if reserved)
-  K-->>PAY: PaymentRequested
-  PAY->>K: PaymentCompleted/Failed
-  K-->>ORD: PaymentCompleted/Failed
+  ORD->>ORD: Persist Order = PENDING (PostgreSQL)
+  ORD->>K: Publish OrderCreated (orders.events)
+
+  K-->>INV: Consume OrderCreated
+  INV->>INV: Reserve stock (PostgreSQL)
+  INV->>K: Publish InventoryReserved/Failed (inventory.events)
+
+  K-->>ORD: Consume InventoryReserved/Failed
+  alt Inventory Reserved
+    ORD->>K: Publish PaymentRequested (payments.events)
+    K-->>PAY: Consume PaymentRequested
+    PAY->>PAY: Process payment (mock)
+    PAY->>K: Publish PaymentCompleted/Failed (payments.events)
+    K-->>ORD: Consume PaymentCompleted/Failed
+    ORD->>ORD: Update Order status (CONFIRMED/FAILED)
+    ORD->>ORD: Update/Invalidate cache (Redis)
+  else Inventory Failed
+    ORD->>ORD: Update Order status (CANCELLED/FAILED)
+    ORD->>ORD: Update/Invalidate cache (Redis)
+  end
 ```
 
 ---
+
+### Security
+- JWT-based authentication
+- Role-based access control (Admin / User)
+- Security enforced centrally at the API Gateway
+- JWT claims propagated to downstream services
+
+### Data & Performance
+- PostgreSQL with Spring Data JPA
+- Flyway database migrations
+- Redis caching for frequently accessed order data
+- Optimized database access patterns
 
 ## Quick start (local, runnable)
 
@@ -91,3 +119,19 @@ Seeded on startup:
 
 ---
 
+### CI / CD
+- GitHub Actions runs on every commit
+- Builds backend services and frontend
+- Runs automated tests to validate configuration and startup
+This ensures the project stays stable as changes are made.
+
+### Containerization & Cloud Readiness
+- Dockerfile per service
+- Docker Compose for local orchestration
+- Kubernetes manifests included
+- Architecture compatible with AWS EKS deployment patterns
+The services are stateless and configurable through environment variables.
+
+### License
+
+MIT
