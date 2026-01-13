@@ -1,6 +1,6 @@
 package com.example.order.api;
 
-import com.example.common.web.CorrelationIdFilter;
+import com.example.order.web.CorrelationIdFilter;
 import com.example.order.api.dto.OrderDtos;
 import com.example.order.security.UserContext;
 import com.example.order.service.OrderAppService;
