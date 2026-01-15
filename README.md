@@ -1,5 +1,6 @@
 # Enterprise Full-Stack Order Management System (Microservices)
 ![CI](https://github.com/leelamanisankarpeerukattla/enterprise-order-management-system/actions/workflows/ci.yml/badge.svg)
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
 **Java • Spring Boot • Kafka • React (TypeScript) • PostgreSQL • Redis • Docker • GitHub Actions • Kubernetes (EKS-ready)**
 
 This project is an end-to-end Order Management System built to demonstrate how real-world backend and full-stack systems are designed, secured, and deployed.
@@ -131,7 +132,3 @@ This ensures the project stays stable as changes are made.
 - Kubernetes manifests included
 - Architecture compatible with AWS EKS deployment patterns
 The services are stateless and configurable through environment variables.
-
-### License
-
-MIT
