@@ -76,6 +76,15 @@ sequenceDiagram
 
 ---
 
+### Design Decisions
+
+- Kafka for asynchronous communication to decouple order creation from inventory and payment processing, allowing services to progress independently and handle partial failures without blocking the request path.
+- API Gateway for centralized routing and RBAC, with JWT validation also enforced at the service level for defense-in-depth and consistent authorization across internal calls.
+- Database-per-service to isolate service data models and prevent cross-service joins, enabling independent schema evolution and safer deployments.
+- Redis caching in the order service to optimize read-heavy access patterns (order status lookups) and reduce repeated database queries after state transitions.
+- Stateless services to support horizontal scaling and cloud-native deployment, with all state persisted in PostgreSQL, Redis, or Kafka.
+
+
 ### Security
 - JWT-based authentication
 - Role-based access control (Admin / User)
